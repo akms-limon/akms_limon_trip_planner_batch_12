@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from app.routes import main_bp
 import os
 
 db = SQLAlchemy()
@@ -8,13 +7,17 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///trip_planner.db"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config.from_object("app.config.Config")
 
     os.makedirs(app.instance_path, exist_ok=True)
 
     db.init_app(app)
 
+    from app.routes import main_bp
     app.register_blueprint(main_bp)
+
+    with app.app_context():
+        from app import models
+        db.create_all()
 
     return app
