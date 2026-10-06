@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from app.routes import main_bp
 import os
 
 db = SQLAlchemy()
@@ -11,7 +12,9 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     os.makedirs(app.instance_path, exist_ok=True)
-    
+
     db.init_app(app)
+
+    app.register_blueprint(main_bp)
 
     return app
