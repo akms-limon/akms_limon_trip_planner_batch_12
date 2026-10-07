@@ -1,6 +1,6 @@
 
 from app import db
-from app.models import Trip
+from app.models import Trip, Traveler, Expense
 
 
 def create_trip(data):
@@ -41,3 +41,40 @@ def update_trip(trip, data):
 def delete_trip(trip):
     db.session.delete(trip)
     db.session.commit()
+
+
+def add_traveler(trip, data):
+    if trip.status != "PLANNED":
+        return None, "TRIP_NOT_PLANNED", "Travelers can only be added to planned trips."
+
+    if len(trip.travelers) >= trip.max_travelers:
+        return None, "TRIP_FULL", "The trip has reached its maximum traveler capacity."
+
+    traveler = Traveler.query.filter_by(email=data["email"]).first()
+
+    if traveler and traveler in trip.travelers:
+        return None, "DUPLICATE_TRAVELER", "The traveler is already part of this trip."
+
+    if traveler:
+        for existing_trip in traveler.trips:
+            if (
+                existing_trip.start_date <= trip.end_date
+                and existing_trip.end_date >= trip.start_date
+            ):
+                return (
+                    None,
+                    "TRIP_OVERLAP",
+                    "The traveler already has another trip during these dates.",
+                )
+
+    if not traveler:
+        traveler = Traveler(
+            name=data["name"],
+            email=data["email"],
+        )
+        db.session.add(traveler)
+
+    trip.travelers.append(traveler)
+    db.session.commit()
+
+    return traveler, None, None

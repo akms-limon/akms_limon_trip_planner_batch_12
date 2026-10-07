@@ -55,3 +55,30 @@ def validate_trip_data(data):
     }
 
     return cleaned_data, None
+
+
+def validate_traveler_data(data):
+    if not isinstance(data, dict):
+        return None, "Request body must be a JSON object"
+
+    if "name" not in data:
+        return None, "Missing required field: name"
+
+    if "email" not in data:
+        return None, "Missing required field: email"
+
+    name = data["name"]
+    email = data["email"]
+
+    if not isinstance(name, str) or not name.strip():
+        return None, "Name must be a non-empty string"
+
+    if not isinstance(email, str) or not email.strip():
+        return None, "Email must be a non-empty string"
+
+    cleaned_data = {
+        "name": name.strip(),
+        "email": email.strip().lower(),
+    }
+
+    return cleaned_data, None
