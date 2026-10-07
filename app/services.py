@@ -27,6 +27,12 @@ def get_trip_by_id(trip_id):
 
 
 def update_trip(trip, data):
+    if trip.status in ["COMPLETED", "CANCELLED"]:
+        return (
+            None,
+            "TRIP_NOT_EDITABLE",
+            f"{trip.status} trips cannot be edited.",
+        )
     trip.destination = data["destination"]
     trip.start_date = data["start_date"]
     trip.end_date = data["end_date"]
@@ -35,7 +41,7 @@ def update_trip(trip, data):
 
     db.session.commit()
 
-    return trip
+    return trip, None, None
 
 
 def delete_trip(trip):

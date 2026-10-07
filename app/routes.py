@@ -73,8 +73,13 @@ def update_trip_route(trip_id):
     if error:
         return jsonify({"error": error}), 400
     
-    trip = update_trip(trip, cleaned_data)
-
+    trip, error_code, error_message = update_trip(trip, cleaned_data)
+    if error_code:
+        return jsonify({
+            "error": error_code,
+            "message": error_message,
+        }), 409
+    
     return jsonify(trip_to_dict(trip)), 200
 
 
