@@ -17,8 +17,27 @@ def create_trip(data):
 
     return trip
 
+
 def get_all_trips():
     return Trip.query.all()
 
+
 def get_trip_by_id(trip_id):
     return db.session.get(Trip, trip_id)
+
+
+def update_trip(trip, data):
+    trip.destination = data["destination"]
+    trip.start_date = data["start_date"]
+    trip.end_date = data["end_date"]
+    trip.budget = data["budget"]
+    trip.max_travelers = data["max_travelers"]
+
+    db.session.commit()
+
+    return trip
+
+
+def delete_trip(trip):
+    db.session.delete(trip)
+    db.session.commit()
