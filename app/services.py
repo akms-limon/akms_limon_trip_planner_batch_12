@@ -155,3 +155,24 @@ def get_trip_summary(trip):
         "total_expense": total_expense,
         "remaining_budget": remaining_budget,
     }
+
+
+def update_trip_status(trip, new_status):
+    allowed_transitions = {
+        "PLANNED": ["ONGOING", "CANCELLED"],
+        "ONGOING": ["COMPLETED", "CANCELLED"],
+        "COMPLETED": [],
+        "CANCELLED": [],
+    }
+
+    if new_status not in allowed_transitions[trip.status]:
+        return (
+            None,
+            "INVALID_STATUS_TRANSITION",
+            f"Cannot change status from {trip.status} to {new_status}.",
+        )
+
+    trip.status = new_status
+    db.session.commit()
+
+    return trip, None, None

@@ -8,12 +8,14 @@ from app.services import (
     add_traveler,
     remove_traveler,
     add_expense,
-    get_trip_summary
+    get_trip_summary,
+    update_trip_status
 )
 from app.validators import (
     validate_trip_data,
     validate_traveler_data,
-    validate_expense_data
+    validate_expense_data,
+    validate_status_data
 )
 from app.utils import trip_to_dict
 
@@ -190,3 +192,34 @@ def trip_summary_route(trip_id):
     summary = get_trip_summary(trip)
 
     return jsonify(summary), 200
+
+
+@api_bp.route("/trips/<int:trip_id>/status", methods=["PATCH"])
+def update_trip_status_route(trip_id):
+    trip = get_trip_by_id(trip_id)
+
+    if not trip:
+        return jsonify({"error": "TRIP_NOT_FOUND"}), 404
+
+    data = request.get_json(silent=True)
+
+    cleaned_data, error = validate_status_data(data)
+
+    if error:
+        return jsonify({"error": error}), 400
+
+    trip, error_code, error_message = update_trip_status(
+        trip,
+        cleaned_data["status"],
+    )
+
+    if error_code:
+        return jsonify({
+            "error": error_code,
+            "message": error_message,
+        }), 409
+
+    return jsonify({
+        "id": trip.id,
+        "status": trip.status,
+    }), 200

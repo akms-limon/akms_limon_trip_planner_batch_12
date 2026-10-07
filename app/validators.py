@@ -109,3 +109,30 @@ def validate_expense_data(data):
     }
 
     return cleaned_data, None
+
+
+def validate_status_data(data):
+    if not isinstance(data, dict):
+        return None, "Request body must be a JSON object"
+
+    if "status" not in data:
+        return None, "Missing required field: status"
+
+    status = data["status"]
+
+    if not isinstance(status, str):
+        return None, "Status must be a string"
+
+    status = status.strip().upper()
+
+    allowed_statuses = [
+        "PLANNED",
+        "ONGOING",
+        "COMPLETED",
+        "CANCELLED",
+    ]
+
+    if status not in allowed_statuses:
+        return None, "Invalid status"
+
+    return {"status": status}, None
