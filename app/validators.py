@@ -27,7 +27,7 @@ def validate_trip_data(data):
     except (ValueError, TypeError):
         return None, "Dates must use YYYY-MM-DD format"
 
-    if end_date <= start_date:
+    if end_date < start_date:
         return None, "End date must be later than start date"
 
     budget = data["budget"]

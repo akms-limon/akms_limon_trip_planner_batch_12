@@ -128,3 +128,24 @@ def add_expense(trip, data):
     db.session.commit()
 
     return expense, None, None
+
+
+def get_trip_summary(trip):
+    traveler_count = len(trip.travelers)
+    available_seats = trip.max_travelers - traveler_count
+    total_expense = sum(expense.amount for expense in trip.expenses)
+    remaining_budget = trip.budget - total_expense
+
+    return {
+        "trip_id": trip.id,
+        "destination": trip.destination,
+        "start_date": trip.start_date.isoformat(),
+        "end_date": trip.end_date.isoformat(),
+        "budget": trip.budget,
+        "max_travelers": trip.max_travelers,
+        "status": trip.status,
+        "traveler_count": traveler_count,
+        "available_seats": available_seats,
+        "total_expense": total_expense,
+        "remaining_budget": remaining_budget,
+    }

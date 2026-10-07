@@ -7,7 +7,8 @@ from app.services import (
     delete_trip,
     add_traveler,
     remove_traveler,
-    add_expense
+    add_expense,
+    get_trip_summary
 )
 from app.validators import (
     validate_trip_data,
@@ -172,3 +173,15 @@ def add_expense_route(trip_id):
         "title": expense.title,
         "amount": expense.amount,
     }), 201
+
+
+@api_bp.route("/trips/<int:trip_id>/summary", methods=["GET"])
+def trip_summary_route(trip_id):
+    trip = get_trip_by_id(trip_id)
+
+    if not trip:
+        return jsonify({"error": "TRIP_NOT_FOUND"}), 404
+
+    summary = get_trip_summary(trip)
+
+    return jsonify(summary), 200
