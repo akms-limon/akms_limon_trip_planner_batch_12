@@ -33,6 +33,14 @@ def update_trip(trip, data):
             "TRIP_NOT_EDITABLE",
             f"{trip.status} trips cannot be edited.",
         )
+
+    if data["max_travelers"] < len(trip.travelers):
+        return (
+            None,
+            "CAPACITY_TOO_LOW",
+            "Max travelers cannot be less than the current traveler count.",
+        )
+
     trip.destination = data["destination"]
     trip.start_date = data["start_date"]
     trip.end_date = data["end_date"]
