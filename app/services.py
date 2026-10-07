@@ -58,8 +58,8 @@ def add_traveler(trip, data):
     if traveler:
         for existing_trip in traveler.trips:
             if (
-                existing_trip.start_date <= trip.end_date
-                and existing_trip.end_date >= trip.start_date
+                existing_trip.start_date < trip.end_date
+                and existing_trip.end_date > trip.start_date
             ):
                 return (
                     None,
