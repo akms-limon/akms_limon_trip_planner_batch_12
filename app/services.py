@@ -78,3 +78,25 @@ def add_traveler(trip, data):
     db.session.commit()
 
     return traveler, None, None
+
+
+def get_traveler_by_id(traveler_id):
+    return db.session.get(Traveler, traveler_id)
+
+
+
+
+def remove_traveler(trip, traveler_id):
+    traveler = db.session.get(Traveler, traveler_id)
+
+    if not traveler:
+        return None, "TRAVELER_NOT_FOUND", "Traveler not found."
+
+    if traveler not in trip.travelers:
+        return None, "TRAVELER_NOT_IN_TRIP", "The traveler is not part of this trip."
+
+    trip.travelers.remove(traveler)
+    db.session.commit()
+
+    return traveler, None, None
+    
