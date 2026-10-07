@@ -6,9 +6,14 @@ from app.services import (
     update_trip,
     delete_trip,
     add_traveler,
-    remove_traveler
+    remove_traveler,
+    add_expense
 )
-from app.validators import validate_trip_data, validate_traveler_data
+from app.validators import (
+    validate_trip_data,
+    validate_traveler_data,
+    validate_expense_data
+)
 from app.utils import trip_to_dict
 
 
@@ -135,3 +140,35 @@ def remove_traveler_route(trip_id, traveler_id):
     return jsonify({
         "message": "Traveler removed successfully"
     }), 200
+
+
+@api_bp.route("/trips/<int:trip_id>/expenses", methods=["POST"])
+def add_expense_route(trip_id):
+    trip = get_trip_by_id(trip_id)
+
+    if not trip:
+        return jsonify({"error": "TRIP_NOT_FOUND"}), 404
+
+    data = request.get_json(silent=True)
+
+    cleaned_data, error = validate_expense_data(data)
+
+    if error:
+        return jsonify({"error": error}), 400
+
+    expense, error_code, error_message = add_expense(
+        trip,
+        cleaned_data,
+    )
+
+    if error_code:
+        return jsonify({
+            "error": error_code,
+            "message": error_message,
+        }), 409
+
+    return jsonify({
+        "id": expense.id,
+        "title": expense.title,
+        "amount": expense.amount,
+    }), 201

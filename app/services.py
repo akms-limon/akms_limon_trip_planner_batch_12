@@ -99,4 +99,32 @@ def remove_traveler(trip, traveler_id):
     db.session.commit()
 
     return traveler, None, None
-    
+
+
+def add_expense(trip, data):
+    if trip.status not in ["PLANNED", "ONGOING"]:
+        return (
+            None,
+            "TRIP_NOT_ACTIVE",
+            "Expenses can only be added to planned or ongoing trips.",
+        )
+
+    total_expenses = sum(expense.amount for expense in trip.expenses)
+
+    if total_expenses + data["amount"] > trip.budget:
+        return (
+            None,
+            "BUDGET_EXCEEDED",
+            "The expense would exceed the trip budget.",
+        )
+
+    expense = Expense(
+        trip_id=trip.id,
+        title=data["title"],
+        amount=data["amount"],
+    )
+
+    db.session.add(expense)
+    db.session.commit()
+
+    return expense, None, None

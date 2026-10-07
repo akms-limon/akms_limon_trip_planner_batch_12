@@ -82,3 +82,30 @@ def validate_traveler_data(data):
     }
 
     return cleaned_data, None
+
+
+def validate_expense_data(data):
+    if not isinstance(data, dict):
+        return None, "Request body must be a JSON object"
+
+    if "title" not in data:
+        return None, "Missing required field: title"
+
+    if "amount" not in data:
+        return None, "Missing required field: amount"
+
+    title = data["title"]
+    amount = data["amount"]
+
+    if not isinstance(title, str) or not title.strip():
+        return None, "Title must be a non-empty string"
+
+    if isinstance(amount, bool) or not isinstance(amount, (int, float)) or amount <= 0:
+        return None, "Amount must be a positive number"
+
+    cleaned_data = {
+        "title": title.strip(),
+        "amount": amount,
+    }
+
+    return cleaned_data, None
