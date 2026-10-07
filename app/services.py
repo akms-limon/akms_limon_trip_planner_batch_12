@@ -16,3 +16,9 @@ def create_trip(data):
     db.session.commit()
 
     return trip
+
+def get_all_trips():
+    return Trip.query.all()
+
+def get_trip_by_id(trip_id):
+    return db.session.get(Trip, trip_id)
