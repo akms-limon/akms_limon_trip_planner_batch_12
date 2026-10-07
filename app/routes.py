@@ -59,7 +59,10 @@ def get_trip(trip_id):
     trip = get_trip_by_id(trip_id)
 
     if not trip:
-        return jsonify({"error": "Trip not found"}), 404
+        return jsonify({
+            "error": "TRIP_NOT_FOUND",
+            "message": "Trip not found.",
+        }), 404
 
     return jsonify(trip_to_dict(trip)), 200
 
@@ -68,7 +71,10 @@ def update_trip_route(trip_id):
     trip = get_trip_by_id(trip_id)
 
     if not trip:
-        return jsonify({"error": "Trip not found"}), 404
+        return jsonify({
+            "error": "TRIP_NOT_FOUND",
+            "message": "Trip not found.",
+        }), 404
 
     data = request.get_json(silent=True)
     cleaned_data, error = validate_trip_data(data)
@@ -90,7 +96,10 @@ def delete_trip_route(trip_id):
     trip = get_trip_by_id(trip_id)
 
     if not trip:
-        return jsonify({"error": "Trip not found"}), 404
+        return jsonify({
+            "error": "TRIP_NOT_FOUND",
+            "message": "Trip not found.",
+        }), 404
 
     delete_trip(trip)
 
@@ -103,7 +112,10 @@ def add_traveler_route(trip_id):
     trip = get_trip_by_id(trip_id)
 
     if not trip:
-        return jsonify({"error": "Trip not found"}), 404
+        return jsonify({
+            "error": "TRIP_NOT_FOUND",
+            "message": "Trip not found.",
+        }), 404
 
     data = request.get_json(silent=True)
     cleaned_data, error = validate_traveler_data(data)
@@ -132,7 +144,10 @@ def remove_traveler_route(trip_id, traveler_id):
     trip = get_trip_by_id(trip_id)
 
     if not trip:
-        return jsonify({"error": "Trip not found"}), 404
+        return jsonify({
+            "error": "TRIP_NOT_FOUND",
+            "message": "Trip not found.",
+        }), 404
 
     traveler, error_code, error_message = remove_traveler(
         trip,
