@@ -2,7 +2,13 @@ import pytest
 
 from app import create_app, db
 from app.models import Trip, Traveler, Expense
-from app.services import create_trip, get_all_trips, get_trip_by_id, update_trip
+from app.services import (
+    create_trip,
+    get_all_trips,
+    get_trip_by_id,
+    update_trip,
+    delete_trip
+)
 from datetime import date
 
 
@@ -200,3 +206,21 @@ def test_update_trip_budget_too_low(app):
         assert updated_trip is None
         assert error_code == "BUDGET_TOO_LOW"
         assert error_message == "Budget cannot be less than the total expenses."
+
+def test_delete_trip(app):
+    with app.app_context():
+        trip = create_trip({
+            "destination": "Cox Bazar",
+            "start_date": date(2026, 10, 20),
+            "end_date": date(2026, 10, 23),
+            "budget": 30000,
+            "max_travelers": 5,
+        })
+
+        trip_id = trip.id
+
+        delete_trip(trip)
+
+        deleted_trip = db.session.get(Trip, trip_id)
+
+        assert deleted_trip is None
