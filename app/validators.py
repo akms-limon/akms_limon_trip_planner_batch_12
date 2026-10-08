@@ -1,3 +1,4 @@
+import math
 from datetime import date
 
 
@@ -34,6 +35,7 @@ def validate_trip_data(data):
     if (
         isinstance(budget, bool)
         or not isinstance(budget, (int, float))
+        or not math.isfinite(budget)
         or budget <= 0
     ):
         return None, "Budget must be a positive number"
@@ -100,7 +102,12 @@ def validate_expense_data(data):
     if not isinstance(title, str) or not title.strip():
         return None, "Title must be a non-empty string"
 
-    if isinstance(amount, bool) or not isinstance(amount, (int, float)) or amount <= 0:
+    if (
+        isinstance(amount, bool)
+        or not isinstance(amount, (int, float))
+        or not math.isfinite(amount)
+        or amount <= 0
+    ):
         return None, "Amount must be a positive number"
 
     cleaned_data = {
