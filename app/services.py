@@ -110,6 +110,13 @@ def get_traveler_by_id(traveler_id):
 
 
 def remove_traveler(trip, traveler_id):
+    if trip.status != "PLANNED":
+        return (
+            None,
+            "TRIP_NOT_PLANNED",
+            "Travelers can only be removed from planned trips.",
+        )
+
     traveler = db.session.get(Traveler, traveler_id)
 
     if not traveler:
