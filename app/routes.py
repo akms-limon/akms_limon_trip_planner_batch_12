@@ -170,7 +170,10 @@ def add_expense_route(trip_id):
     trip = get_trip_by_id(trip_id)
 
     if not trip:
-        return jsonify({"error": "TRIP_NOT_FOUND"}), 404
+        return jsonify({
+            "error": "TRIP_NOT_FOUND",
+            "message": "Trip not found.",
+        }), 404
 
     data = request.get_json(silent=True)
 
@@ -202,7 +205,10 @@ def trip_summary_route(trip_id):
     trip = get_trip_by_id(trip_id)
 
     if not trip:
-        return jsonify({"error": "TRIP_NOT_FOUND"}), 404
+        return jsonify({
+            "error": "TRIP_NOT_FOUND",
+            "message": "Trip not found.",
+        }), 404
 
     summary = get_trip_summary(trip)
 
@@ -214,7 +220,10 @@ def update_trip_status_route(trip_id):
     trip = get_trip_by_id(trip_id)
 
     if not trip:
-        return jsonify({"error": "TRIP_NOT_FOUND"}), 404
+        return jsonify({
+            "error": "TRIP_NOT_FOUND",
+            "message": "Trip not found.",
+        }), 404
 
     data = request.get_json(silent=True)
 
