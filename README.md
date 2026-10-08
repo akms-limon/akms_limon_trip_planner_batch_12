@@ -313,14 +313,39 @@ All other transitions are rejected with `409`.
 - A new trip starts with the status `PLANNED`.
 - The API is used by a single local client; there is no authentication.
 
-## 8. Project Structure
+## 8. Testing
+
+The project uses `pytest` for service-layer unit tests and `pytest-cov` for coverage reporting.
+
+The testing dependencies are included in `requirements.txt`, so no additional installation is required.
+
+### Run Tests
+
+First, start the application using:
+
+```bash
+./run.sh
+```
+
+Then, open a separate terminal in the project directory and run:
+
+```bash
+./.venv/bin/pytest
+```
+
+### Run Tests with Coverage
+
+```bash
+./.venv/bin/pytest --cov=app.services --cov-report=term-missing
+```
+
+## 9. Project Structure
 
 ```text
 akms_limon_trip_planner_batch_12/
 ├── app/
 │   ├── __init__.py
 │   ├── config.py
-│   ├── errors.py
 │   ├── models.py
 │   ├── routes.py
 │   ├── services.py
@@ -335,7 +360,7 @@ akms_limon_trip_planner_batch_12/
 └── run.sh
 ```
 
-## 9. SQLite Initialization and Storage
+## 10. SQLite Initialization and Storage
 
 - Flask-SQLAlchemy manages the models and relationships for trips, travelers, and expenses.
 - Tables are created automatically when the application starts, so no manual SQL setup is needed.
@@ -343,10 +368,9 @@ akms_limon_trip_planner_batch_12/
 - It is generated locally and is not committed to the repository.
 - Data is stored in SQLite, not in memory, so it persists across restarts.
 
-## 10. Known Limitations
+## 11. Known Limitations
 
 - No authentication or authorization.
 - No frontend; REST API only.
 - Uses a local SQLite database only; no external database support.
 - Intended to run locally on `127.0.0.1:5000`; no deployment configuration.
-```
