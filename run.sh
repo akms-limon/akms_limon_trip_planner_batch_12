@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 
 set -e
@@ -13,5 +12,7 @@ source .venv/bin/activate
 
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
+
+./.venv/bin/pytest tests/test_services.py
 
 exec python run.py
