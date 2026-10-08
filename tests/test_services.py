@@ -7,7 +7,8 @@ from app.services import (
     get_all_trips,
     get_trip_by_id,
     update_trip,
-    delete_trip
+    delete_trip,
+    add_traveler
 )
 from datetime import date
 
@@ -224,3 +225,28 @@ def test_delete_trip(app):
         deleted_trip = db.session.get(Trip, trip_id)
 
         assert deleted_trip is None
+
+def test_add_traveler(app):
+    with app.app_context():
+        trip = create_trip({
+            "destination": "Cox Bazar",
+            "start_date": date(2026, 10, 20),
+            "end_date": date(2026, 10, 23),
+            "budget": 30000,
+            "max_travelers": 5,
+        })
+
+        traveler, error_code, error_message = add_traveler(
+            trip,
+            {
+                "name": "Limon",
+                "email": "limon@example.com",
+            },
+        )
+
+        assert traveler is not None
+        assert traveler.name == "Limon"
+        assert traveler.email == "limon@example.com"
+        assert error_code is None
+        assert error_message is None
+        assert traveler in trip.travelers
