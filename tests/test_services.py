@@ -2,7 +2,7 @@ import pytest
 
 from app import create_app, db
 from app.models import Trip
-from app.services import create_trip, get_all_trips
+from app.services import create_trip, get_all_trips, get_trip_by_id, update_trip
 from datetime import date
 
 
@@ -63,3 +63,26 @@ def test_get_all_trips(app):
         assert len(trips) == 2
         assert trips[0].destination == "Cox Bazar"
         assert trips[1].destination == "Sylhet"
+
+
+def test_get_trip_by_id(app):
+    with app.app_context():
+        trip = create_trip({
+            "destination": "Cox Bazar",
+            "start_date": date(2026, 10, 20),
+            "end_date": date(2026, 10, 23),
+            "budget": 30000,
+            "max_travelers": 5,
+        })
+
+        found_trip = get_trip_by_id(trip.id)
+
+        assert found_trip is not None
+        assert found_trip.id == trip.id
+        assert found_trip.destination == "Cox Bazar"
+
+def test_get_trip_by_id_not_found(app):
+    with app.app_context():
+        trip = get_trip_by_id(999)
+
+        assert trip is None
