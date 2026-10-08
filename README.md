@@ -348,4 +348,3 @@ akms_limon_trip_planner_batch_12/
 - No frontend; REST API only.
 - Uses a local SQLite database only; no external database support.
 - Intended to run locally on `127.0.0.1:5000`; no deployment configuration.
-```
