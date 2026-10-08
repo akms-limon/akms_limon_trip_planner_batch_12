@@ -4,9 +4,9 @@ A REST API for managing group trips, travelers, expenses, and trip status. Built
 
 ## 1. Project Overview and Problem Statement
 
-**Problem.** Organizing a group trip involves tracking who has joined, how many seats are left, whether a person is already booked on another trip at the same time, and whether spending is within budget. Done by hand, this leads to overbooking, duplicate sign-ups, clashing trips, and overspending.
+**Problem.** Organizing a group trip involves tracking who has joined, how many seats are left, whether a person is already booked on another trip at the same time, and whether spending is within budget. Done by hand, this can lead to overbooking, duplicate sign-ups, clashing trips, and overspending.
 
-**Solution.** This API stores trips, travelers, and expenses, and enforces these rules automatically. It rejects overbooking, duplicate travelers, overlapping trips, overspending, and invalid status changes, and it controls each trip through a defined lifecycle (`PLANNED`, `ONGOING`, `COMPLETED`, `CANCELLED`).
+**Solution.** This API stores trips, travelers, and expenses, and enforces these rules automatically. It prevents overbooking, duplicate travelers, overlapping trips for the same traveler, overspending, and invalid status changes, and it controls each trip through a defined lifecycle (`PLANNED`, `ONGOING`, `COMPLETED`, `CANCELLED`).
 
 ## 2. Prerequisites
 
@@ -29,7 +29,7 @@ cd akms_limon_trip_planner_batch_12
 ./run.sh
 ```
 
-The script creates or reuses a virtual environment, installs dependencies from `requirements.txt`, initializes the SQLite database when required, and starts the API on `127.0.0.1:5000`.
+The script creates or reuses a virtual environment, installs dependencies from `requirements.txt`, runs the service-layer tests with coverage, initializes the SQLite database when the application starts, and starts the API on `127.0.0.1:5000` only if all tests pass.
 
 Verify:
 
@@ -89,7 +89,6 @@ python run.py
 | Method | Route | Description |
 | ------ | ----- | ----------- |
 | PATCH | `/api/v1/trips/<trip_id>/status` | Update trip status |
-
 
 Status codes: `200` success, `201` created, `400` invalid data, `404` not found, `409` business-rule conflict.
 
@@ -177,6 +176,8 @@ Response `201`:
 ```
 
 ### Remove a traveler
+
+Travelers can be removed only while the trip is `PLANNED`.
 
 ```bash
 curl -X DELETE http://127.0.0.1:5000/api/v1/trips/1/travelers/1
@@ -290,8 +291,10 @@ Adding an expense that exceeds the remaining budget returns `409`:
 - A traveler cannot join trips with overlapping date ranges. Back-to-back trips are allowed when the first trip ends before the second begins.
 - Expense amounts must be positive.
 - Total expenses cannot exceed the trip budget. Spending exactly the remaining budget is allowed.
+- A trip budget cannot be reduced below its current total expenses.
 - Maximum capacity cannot be reduced below the current traveler count.
 - Travelers can be added only while a trip is `PLANNED`.
+- Travelers can be removed only while a trip is `PLANNED`.
 - Expenses can be added only while a trip is `PLANNED` or `ONGOING`.
 - `COMPLETED` and `CANCELLED` trips cannot be edited or accept travelers or expenses.
 - `COMPLETED` and `CANCELLED` trips cannot transition to another status.
@@ -308,7 +311,6 @@ All other transitions are rejected with `409`.
 ### Assumptions
 
 - A traveler is identified by email address.
-- Traveler email addresses are normalized to lowercase before being stored.
 - Dates use the `YYYY-MM-DD` format.
 - A new trip starts with the status `PLANNED`.
 - The API is used by a single local client; there is no authentication.
@@ -321,22 +323,18 @@ The testing dependencies are included in `requirements.txt`, so no additional in
 
 ### Run Tests
 
-First, start the application using:
+Running:
 
 ```bash
 ./run.sh
 ```
 
-Then, open a separate terminal in the project directory and run:
+automatically runs the service-layer tests with coverage before starting the Flask server. The server starts only if all tests pass.
+
+### Run Tests Manually
 
 ```bash
-./.venv/bin/pytest
-```
-
-### Run Tests with Coverage
-
-```bash
-./.venv/bin/pytest --cov=app.services --cov-report=term-missing
+./.venv/bin/pytest tests/test_services.py
 ```
 
 ## 9. Project Structure
@@ -355,6 +353,7 @@ akms_limon_trip_planner_batch_12/
 │   └── test_services.py
 ├── .gitignore
 ├── README.md
+├── pytest.ini
 ├── requirements.txt
 ├── run.py
 └── run.sh
