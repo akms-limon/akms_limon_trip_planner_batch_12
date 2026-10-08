@@ -41,6 +41,15 @@ def update_trip(trip, data):
             "Max travelers cannot be less than the current traveler count.",
         )
 
+    total_expenses = sum(expense.amount for expense in trip.expenses)
+
+    if data["budget"] < total_expenses:
+        return (
+            None,
+            "BUDGET_TOO_LOW",
+            "Budget cannot be less than the total expenses.",
+        )
+
     trip.destination = data["destination"]
     trip.start_date = data["start_date"]
     trip.end_date = data["end_date"]
